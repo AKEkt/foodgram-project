@@ -12,13 +12,13 @@ class User(AbstractUser):
         max_length=150,
         unique=True
     )
-    firstname = models.CharField(
+    first_name = models.CharField(
         'Фамилия',
         max_length=150,
         null=True,
         blank=True
     )
-    lastname = models.CharField(
+    last_name = models.CharField(
         'Имя',
         max_length=150,
         null=True,

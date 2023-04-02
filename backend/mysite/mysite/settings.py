@@ -136,3 +136,9 @@ REST_FRAMEWORK = {
     ]
 
 }
+DJOSER = {
+    'SERIALIZERS': {
+
+    }
+
+}
