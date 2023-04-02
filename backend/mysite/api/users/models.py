@@ -5,7 +5,8 @@ from django.contrib.auth.models import AbstractUser, UserManager
 class User(AbstractUser):
     email = models.EmailField(
         'Электронная почта',
-        max_length=254
+        max_length=254,
+        unique=True
     )
     username = models.CharField(
         'Ник',
@@ -28,8 +29,12 @@ class User(AbstractUser):
         'Пароль',
         max_length=150,
     )
+    is_subscribed = models.BooleanField(default=False)
 
     object = UserManager()
+    
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     class Meta:
         verbose_name = 'Пользователь'
