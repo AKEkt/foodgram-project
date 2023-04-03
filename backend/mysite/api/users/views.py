@@ -1,12 +1,16 @@
 from django.contrib.auth import get_user_model
-from .serializers import UserSerializer
-from rest_framework import viewsets
+from djoser.views import TokenCreateView, UserViewSet
 
+from .serializers import MyTokenCreateSerializer
 
 User = get_user_model()
 
 
-class UsersViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+class CustomTokenCreateView(TokenCreateView):
+    serializer_class = MyTokenCreateSerializer
 
+
+class CustomDjoserUserViewSet(UserViewSet):
+
+    def get_queryset(self):
+        return User.objects.all()

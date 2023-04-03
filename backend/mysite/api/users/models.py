@@ -31,10 +31,10 @@ class User(AbstractUser):
     )
     is_subscribed = models.BooleanField(default=False)
 
-    object = UserManager()
-    
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+
+    object = UserManager()
 
     class Meta:
         verbose_name = 'Пользователь'
