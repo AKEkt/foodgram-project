@@ -3,18 +3,13 @@ from django.contrib.auth import get_user_model
 from djoser.serializers import TokenCreateSerializer
 from djoser.serializers import UserSerializer
 from .models import Follow
+from djoser.conf import settings
 
 User = get_user_model()
 
 
 class MyTokenCreateSerializer(TokenCreateSerializer):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.user = None
-        self.fields[User.USERNAME_FIELD] = serializers.CharField(
-            required=False
-        )
+    settings.LOGIN_FIELD = User.USERNAME_FIELD
 
 
 class MyDjoserUserSerializer(UserSerializer):
