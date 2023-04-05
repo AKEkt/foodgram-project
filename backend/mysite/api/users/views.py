@@ -2,17 +2,13 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.views import TokenCreateView, UserViewSet
 from rest_framework import viewsets
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.response import Response
-from rest_framework import permissions
-from rest_framework.decorators import permission_classes
 from .serializers import (ListSubscripSerializer, MyDjoserUserSerializer,
                           MyTokenCreateSerializer, SubscripUserSerializer)
-
-# from rest_framework.views import APIView
-
-
+from rest_framework.response import Response
+from rest_framework import status
+from django.http import Http404
+from .models import Follow
+from rest_framework import generics
 User = get_user_model()
 
 
@@ -20,25 +16,15 @@ class CustomTokenCreateView(TokenCreateView):
     serializer_class = MyTokenCreateSerializer
 
 
-class ListrAllUserViewSet(viewsets.ModelViewSet):
+class CustomUsersViewSet(UserViewSet):
     serializer_class = MyDjoserUserSerializer
-    queryset = User.objects.all()
 
-    def get_instance(self):
-        if self.kwargs.get('id') is not None:
-            return User.objects.get(id=self.kwargs.get('user_id'))
-        
     def get_queryset(self):
-        return self.request.user
-
-    @action(detail=False, methods=('get',),
-            permission_classes=(IsAuthenticated,))
-    def me(self, request):
-        instance = request.user
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
-
-
+        user = self.request.user
+        queryset = super().get_queryset()
+        if self.action == 'list':
+            return queryset
+        return queryset.filter(pk=user.pk)
 
 
 class ListSubscripViewSet(UserViewSet):
@@ -50,10 +36,26 @@ class ListSubscripViewSet(UserViewSet):
         )
 
 
-class FollowViewSet(viewsets.ModelViewSet):
+class FollowViewSet(generics.CreateAPIView, generics.DestroyAPIView):
     serializer_class = SubscripUserSerializer
+    queryset = Follow.objects.all()
+    http_method_names = ['post', 'delete']
 
     def perform_create(self, serializer):
         author = get_object_or_404(User,
-                                   id=self.kwargs.get('subs_id'))
+                                   id=self.kwargs.get('pk'))
         serializer.save(user=self.request.user, author=author)
+    
+    def delete(self, request, *args, **kwargs):
+        author = get_object_or_404(User, id=self.kwargs.get('pk'))
+        follow_user = Follow.objects.filter(user=self.request.user, author=author)
+        if follow_user.exists():
+            follow_user.delete()
+            return Response(
+                {
+                    'выполнено': 'Успешная отписка'
+                }, status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {
+                'ошибка': 'Объект не найден'
+            }, status=status.HTTP_400_BAD_REQUEST)

@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from djoser.serializers import TokenCreateSerializer
-from djoser.serializers import UserSerializer
+from djoser.serializers import UserSerializer, SetPasswordSerializer
 from .models import Follow
-from djoser.conf import settings
+from djoser.conf import settings 
 
 User = get_user_model()
 
@@ -22,12 +22,8 @@ class MyDjoserUserSerializer(UserSerializer):
     def get_is_subscribed(self, obj):
 
         return Follow.objects.filter(
-            user=self.context.get('request').user.id, author=obj.id
+            user=self.context['request'].user.id, author=obj.id
             ).exists()
-
-
-class ListSubscripSerializer(MyDjoserUserSerializer):
-    pass
 
 
 class SubscripUserSerializer(serializers.ModelSerializer):
@@ -61,3 +57,21 @@ class SubscripUserSerializer(serializers.ModelSerializer):
 
     def get_recipes_count(self, obj):
         return 0
+
+
+class ListSubscripSerializer(SubscripUserSerializer):
+    email = serializers.EmailField(max_length=254)
+    username = serializers.CharField(max_length=150)
+    first_name = serializers.CharField(max_length=150)
+    last_name = serializers.CharField(max_length=150)
+
+    class Meta:
+        model = User
+        fields = ('email',
+                  'id',
+                  'username',
+                  'first_name',
+                  'last_name',
+                  'is_subscribed',
+                  'recipes',
+                  'recipes_count',)
