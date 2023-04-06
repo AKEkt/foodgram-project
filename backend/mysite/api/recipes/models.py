@@ -29,7 +29,7 @@ class Tag(models.Model):
         return self.name
 
 
-class Ingredients(models.Model):
+class Ingredient(models.Model):
     name = models.CharField(
         "Название",
         max_length=150,
@@ -48,3 +48,12 @@ class Ingredients(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class IngredientsAmount(models.Model):
+    recipesid = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        related_name='ingred'
+    )
+    amount = models.IntegerField()
