@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from djoser.serializers import TokenCreateSerializer
-from djoser.serializers import UserSerializer, SetPasswordSerializer
+from djoser.serializers import UserSerializer
 from .models import Follow
-from djoser.conf import settings 
+from djoser.conf import settings
 
 User = get_user_model()
 

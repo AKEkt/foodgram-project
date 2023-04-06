@@ -1,12 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.views import TokenCreateView, UserViewSet
-from rest_framework import viewsets
 from .serializers import (ListSubscripSerializer, MyDjoserUserSerializer,
                           MyTokenCreateSerializer, SubscripUserSerializer)
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import Http404
 from .models import Follow
 from rest_framework import generics
 from rest_framework.decorators import action
@@ -57,10 +55,11 @@ class FollowViewSet(generics.CreateAPIView, generics.DestroyAPIView):
         author = get_object_or_404(User,
                                    id=self.kwargs.get('pk'))
         serializer.save(user=self.request.user, author=author)
-    
+
     def delete(self, request, *args, **kwargs):
         author = get_object_or_404(User, id=self.kwargs.get('pk'))
-        follow_user = Follow.objects.filter(user=self.request.user, author=author)
+        follow_user = Follow.objects.filter(user=self.request.user,
+                                            author=author)
         if follow_user.exists():
             follow_user.delete()
             return Response(
