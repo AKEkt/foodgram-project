@@ -145,13 +145,15 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10,
+    'PAGE_SIZE': 5,
 }
 DJOSER = {
     'SERIALIZERS': {
         'token_create': 'api.users.serializers.MyTokenCreateSerializer',
         'user': 'api.users.serializers.MyDjoserUserSerializer',
         'current_user': 'api.users.serializers.MyDjoserUserSerializer',
-
+    },
+    'PERMISSIONS': {
+        'user_list': ['rest_framework.permissions.AllowAny'],
     },
 }

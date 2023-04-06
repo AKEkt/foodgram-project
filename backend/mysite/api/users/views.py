@@ -9,6 +9,7 @@ from rest_framework import status
 from django.http import Http404
 from .models import Follow
 from rest_framework import generics
+from rest_framework.decorators import action
 User = get_user_model()
 
 
@@ -20,11 +21,22 @@ class CustomUsersViewSet(UserViewSet):
     serializer_class = MyDjoserUserSerializer
 
     def get_queryset(self):
-        user = self.request.user
-        queryset = super().get_queryset()
-        if self.action == 'list':
-            return queryset
-        return queryset.filter(pk=user.pk)
+        return User.objects.all()
+
+    @action(
+        detail=False,
+        methods=('get',), )
+    def me(self, request):
+        instance = request.user
+        if request.method == 'GET':
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = User.objects.all()
+        user = get_object_or_404(queryset, pk=pk)
+        serializer = self.get_serializer(user)
+        return Response(serializer.data)
 
 
 class ListSubscripViewSet(UserViewSet):
