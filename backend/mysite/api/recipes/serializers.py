@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Tag, Ingredients
+from .models import Tag, Ingredient, Recipes, RecipIngred
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -13,9 +13,24 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class IngredientsSerializer(serializers.ModelSerializer):
+    amount = serializers.SerializerMethodField()
 
     class Meta:
-        model = Ingredients
+        model = Ingredient
         fields = ('id',
                   'name',
-                  'measurement_unit',)
+                  'measurement_unit',
+                  'amount',)
+
+    def get_amount(self, obj):
+        pass
+
+
+class RecipesSerializer(serializers.ModelSerializer):
+    ingredients = IngredientsSerializer(many=True)
+
+    class Meta:
+        model = Recipes
+        fields = ('id',
+                  'ingredients',
+                  'name',)
