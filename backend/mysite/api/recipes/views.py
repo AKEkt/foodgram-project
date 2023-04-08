@@ -15,8 +15,8 @@ class TagsViewSet(mixins.ListModelMixin,
 class IngredientsViewSet(mixins.ListModelMixin,
                          mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     pagination_class = None
-    queryset = Ingredient.objects.all()
-    serializer_class = IngredientsSerializer
+
+
 
 
 class RecipesViewSet(viewsets.ModelViewSet):

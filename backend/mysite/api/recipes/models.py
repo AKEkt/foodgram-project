@@ -1,4 +1,8 @@
 from django.db import models
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 
 class Tag(models.Model):
@@ -51,14 +55,31 @@ class Ingredient(models.Model):
 
 
 class Recipes(models.Model):
+    tags = models.ForeignKey(
+        'Тег',
+        Tag,
+        on_delete=models.SET_NULL
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
     ingredients = models.ManyToManyField(Ingredient, through='RecipIngred')
     name = models.CharField(
         "Название",
         max_length=150,
         unique=True,
     )
+    # image =
+    text = models.CharField(
+        "Текстовое описание",
+        max_length=150
+    )
+    cooking_time = models.IntegerField(
+        "Время приготовления в минутах"
+    )
 
-    REQUIRED_FIELDS = ['name']
+    REQUIRED_FIELDS = ['name','text','cooking_time',]
 
     class Meta:
         verbose_name = 'Рецепт'
@@ -73,14 +94,16 @@ class RecipIngred(models.Model):
     recipesid = models.ForeignKey(
         Recipes,
         on_delete=models.CASCADE,
-        related_name='recipesid'
+        related_name='recip'
     )
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        related_name='ingredient'
+        related_name='ingred'
     )
     amount = models.IntegerField()
+
+    REQUIRED_FIELDS = ['amount']
 
     class Meta:
         verbose_name = 'Ингредиенты рецепта'
@@ -88,4 +111,4 @@ class RecipIngred(models.Model):
         ordering = ['-id']
 
     def __str__(self):
-        return f'{self.recipesid} {self.ingredient} {self.amount}'
+        return f'{self.recipesid}: {self.ingredient}-{self.amount}'

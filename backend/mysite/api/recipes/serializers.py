@@ -13,24 +13,28 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class IngredientsSerializer(serializers.ModelSerializer):
-    amount = serializers.SerializerMethodField()
+    # amount = serializers.ReadOnlyField(source='amount')
+    id = serializers.ReadOnlyField(source='ingredient.id')
+    name = serializers.ReadOnlyField(source='ingredient.name')
+    measurement_unit = serializers.ReadOnlyField(
+        source='ingredient.measurement_unit'
+    )
 
     class Meta:
-        model = Ingredient
+        model = RecipIngred
         fields = ('id',
                   'name',
                   'measurement_unit',
                   'amount',)
 
-    def get_amount(self, obj):
-        pass
-
 
 class RecipesSerializer(serializers.ModelSerializer):
-    ingredients = IngredientsSerializer(many=True)
+    ingredients = IngredientsSerializer(many=True, source='recip.all')
 
     class Meta:
         model = Recipes
         fields = ('id',
                   'ingredients',
-                  'name',)
+                  'name',
+                  'text',
+                  'cooking_time')
