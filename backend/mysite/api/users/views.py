@@ -1,13 +1,14 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.views import TokenCreateView, UserViewSet
-from .serializers import (ListSubscripSerializer, MyDjoserUserSerializer,
-                          MyTokenCreateSerializer, SubscripUserSerializer)
-from rest_framework.response import Response
-from rest_framework import status
-from .models import Follow
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.decorators import action
+from rest_framework.response import Response
+from ..serializers.serializers import MyDjoserUserSerializer
+from .models import Follow
+from .serializers import (MyTokenCreateSerializer,
+                          SubscripUserSerializer)
+
 User = get_user_model()
 
 
@@ -38,11 +39,11 @@ class CustomUsersViewSet(UserViewSet):
 
 
 class ListSubscripViewSet(UserViewSet):
-    serializer_class = ListSubscripSerializer
+    serializer_class = SubscripUserSerializer
 
     def get_queryset(self):
-        return User.objects.filter(
-           following__user=self.request.user
+        return Follow.objects.filter(
+           user=self.request.user
         )
 
 

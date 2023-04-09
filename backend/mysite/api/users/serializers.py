@@ -1,29 +1,16 @@
-from rest_framework import serializers
+from ..recipes.models import Recipes
+from ..recipes.serializers import SubscripRecipesSerializer
 from django.contrib.auth import get_user_model
-from djoser.serializers import TokenCreateSerializer
-from djoser.serializers import UserSerializer
-from .models import Follow
 from djoser.conf import settings
+from djoser.serializers import TokenCreateSerializer
+from rest_framework import serializers
+from .models import Follow
 
 User = get_user_model()
 
 
 class MyTokenCreateSerializer(TokenCreateSerializer):
     settings.LOGIN_FIELD = User.USERNAME_FIELD
-
-
-class MyDjoserUserSerializer(UserSerializer):
-
-    is_subscribed = serializers.SerializerMethodField()
-
-    class Meta(UserSerializer.Meta):
-        fields = UserSerializer.Meta.fields + ('is_subscribed',)
-
-    def get_is_subscribed(self, obj):
-
-        return Follow.objects.filter(
-            user=self.context['request'].user.id, author=obj.id
-            ).exists()
 
 
 class SubscripUserSerializer(serializers.ModelSerializer):
@@ -50,28 +37,14 @@ class SubscripUserSerializer(serializers.ModelSerializer):
                         'user': {'read_only': True}}
 
     def get_is_subscribed(self, obj):
-        return True
+        return Follow.objects.filter(
+            user=self.context['request'].user.id, author=obj.author.id
+            ).exists()
 
     def get_recipes(self, obj):
-        return 0
+        queryset = Recipes.objects.filter(author=obj.author.id)
+        serializer = SubscripRecipesSerializer(queryset, many=True)
+        return serializer.data
 
     def get_recipes_count(self, obj):
-        return 0
-
-
-class ListSubscripSerializer(SubscripUserSerializer):
-    email = serializers.EmailField(max_length=254)
-    username = serializers.CharField(max_length=150)
-    first_name = serializers.CharField(max_length=150)
-    last_name = serializers.CharField(max_length=150)
-
-    class Meta:
-        model = User
-        fields = ('email',
-                  'id',
-                  'username',
-                  'first_name',
-                  'last_name',
-                  'is_subscribed',
-                  'recipes',
-                  'recipes_count',)
+        return Recipes.objects.filter(author=obj.author.id).count()

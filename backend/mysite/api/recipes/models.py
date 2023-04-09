@@ -7,17 +7,17 @@ User = get_user_model()
 
 class Tag(models.Model):
     name = models.CharField(
-        "Название",
+        'Название',
         max_length=150,
         unique=True,
     )
     color = models.CharField(
-        "Цветовой HEX-код",
+        'Цветовой HEX-код',
         max_length=14,
         unique=True,
     )
     slug = models.SlugField(
-        "Слаг",
+        'Слаг',
         max_length=150,
         unique=True,
     )
@@ -35,7 +35,7 @@ class Tag(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(
-        "Название",
+        'Название',
         max_length=150,
     )
     measurement_unit = models.CharField(
@@ -55,31 +55,31 @@ class Ingredient(models.Model):
 
 
 class Recipes(models.Model):
-    tags = models.ForeignKey(
-        'Тег',
-        Tag,
-        on_delete=models.SET_NULL
-    )
+    tags = models.ManyToManyField(Tag, through='TagRecip')
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE
     )
     ingredients = models.ManyToManyField(Ingredient, through='RecipIngred')
     name = models.CharField(
-        "Название",
+        'Название',
         max_length=150,
         unique=True,
     )
-    # image =
+    image = models.ImageField(
+        'Картинка',
+        upload_to="recipes/images/",
+        default=None
+    )
     text = models.CharField(
-        "Текстовое описание",
+        'Текстовое описание',
         max_length=150
     )
     cooking_time = models.IntegerField(
-        "Время приготовления в минутах"
+        'Время приготовления в минутах'
     )
 
-    REQUIRED_FIELDS = ['name','text','cooking_time',]
+    REQUIRED_FIELDS = ['name', 'image', 'text', 'cooking_time']
 
     class Meta:
         verbose_name = 'Рецепт'
@@ -94,7 +94,7 @@ class RecipIngred(models.Model):
     recipesid = models.ForeignKey(
         Recipes,
         on_delete=models.CASCADE,
-        related_name='recip'
+        related_name='recip_ing'
     )
     ingredient = models.ForeignKey(
         Ingredient,
@@ -106,9 +106,30 @@ class RecipIngred(models.Model):
     REQUIRED_FIELDS = ['amount']
 
     class Meta:
-        verbose_name = 'Ингредиенты рецепта'
+        verbose_name = 'Ингредиент рецепта'
         verbose_name_plural = 'Ингредиенты рецептов'
         ordering = ['-id']
 
     def __str__(self):
         return f'{self.recipesid}: {self.ingredient}-{self.amount}'
+
+
+class TagRecip(models.Model):
+    recipesid = models.ForeignKey(
+        Recipes,
+        on_delete=models.CASCADE,
+        related_name='recip_tag'
+    )
+    tag = models.ForeignKey(
+        Tag,
+        on_delete=models.CASCADE,
+        related_name='tag'
+    )
+
+    class Meta:
+        verbose_name = 'Тег рецепта'
+        verbose_name_plural = 'Теги рецептов'
+        ordering = ['-id']
+
+    def __str__(self):
+        return f'{self.recipesid}: {self.tag}'

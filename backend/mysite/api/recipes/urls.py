@@ -7,7 +7,9 @@ router_v1.register(r'tags', TagsViewSet, basename='tags')
 router_v1.register(r'ingredients', IngredientsViewSet, basename='ingredients')
 
 urlpatterns = [
-    path('recipes/', RecipesViewSet.as_view({'get': 'list'})),
+
+    path('recipes/', RecipesViewSet.as_view({'get': 'list', 'post': 'create'})),
+    path('recipes/<int:pk>/', RecipesViewSet.as_view({'get': 'retrieve'})),
     path('', include(router_v1.urls)),
 
 ]
