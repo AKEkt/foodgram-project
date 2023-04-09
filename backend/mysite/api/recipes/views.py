@@ -21,8 +21,7 @@ class IngredientsViewSet(mixins.ListModelMixin,
 
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
-    serializer_class = RecipesSerializer
-
+    
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
             return RecipesSerializer
