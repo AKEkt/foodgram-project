@@ -8,7 +8,8 @@ router_v1.register(r'ingredients', IngredientsViewSet, basename='ingredients')
 router_v1.register(r'recipes', RecipesViewSet, basename='recipes')
 urlpatterns = [
 
-    # path('recipes/', RecipesViewSet.as_view({'get': 'list', 'post': 'create'})),
+    # path('recipes/', RecipesViewSet.as_view({'get': 'list',
+    #                                         'post': 'create'})),
     # path('recipes/<int:pk>/', RecipesViewSet.as_view({'get': 'retrieve'})),
     path('', include(router_v1.urls)),
 

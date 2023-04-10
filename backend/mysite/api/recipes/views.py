@@ -21,6 +21,7 @@ class IngredientsViewSet(mixins.ListModelMixin,
 
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
+    http_method_names = ['get', 'post', 'patch', 'delete']
     
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
