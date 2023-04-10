@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from .models import Ingredient, Recipes, Tag, RecipIngred, TagRecip
+from .models import Ingredient, Recipes, Tag, RecipIngred, TagRecip, Favorite
 from ..serializers.serializers import MyDjoserUserSerializer, Base64ImageField
 from django.shortcuts import get_object_or_404
 
@@ -129,3 +129,17 @@ class RecipesCreateSerializer(RecipesSerializer):
             TagRecip.objects.create(recipesid=instance, tag=curr_tags)
         instance.save()
         return instance
+
+
+class FavoriteUserSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
+    name = serializers.ReadOnlyField()
+    image = serializers.ReadOnlyField()
+    cooking_time = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Favorite
+        fields = ('id',
+                  'name',
+                  'image',
+                  'cooking_time',)

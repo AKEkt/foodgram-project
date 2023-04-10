@@ -133,3 +133,19 @@ class TagRecip(models.Model):
 
     def __str__(self):
         return f'{self.recipesid}: {self.tag}'
+
+
+class Favorite(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+    favoritrecip = models.ForeignKey(
+        Recipes,
+        on_delete=models.CASCADE
+    )
+
+    class Meta:
+        verbose_name = 'Список избранного'
+        verbose_name_plural = 'Списки избранного'
+        ordering = ['-id']
