@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics, mixins, status, viewsets
 from rest_framework.response import Response
 
-from .models import Favorite, Ingredient, Recipes, Tag
+from .models import Favorite, Ingredient, Recipes, Tag, ShoppingCart
 from .serializers import (IngredientsSerializer, RecipesCreateSerializer,
                           RecipesSerializer, SubscripRecipesSerializer,
                           TagSerializer)
@@ -36,7 +36,6 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
 
 class FavoriteViewSet(generics.CreateAPIView, generics.DestroyAPIView):
-    http_method_names = ['post', 'delete']
 
     def create(self, request, *args, **kwargs):
         recip = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
@@ -53,6 +52,30 @@ class FavoriteViewSet(generics.CreateAPIView, generics.DestroyAPIView):
             return Response(
                 {
                     'выполнено': 'Рецепт успешно удален из избранного'
+                }, status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {
+                'ошибка': 'Объект не найден'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ShoppingCartViewSet(generics.CreateAPIView, generics.DestroyAPIView):
+
+    def create(self, request, *args, **kwargs):
+        recip = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
+        ShoppingCart.objects.create(shoprecipe=recip, user=self.request.user)
+        serializer = SubscripRecipesSerializer(recip)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, *args, **kwargs):
+        recip = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
+        favorite = ShoppingCart.objects.filter(shoprecipe=recip,
+                                               user=self.request.user)
+        if favorite.exists():
+            favorite.delete()
+            return Response(
+                {
+                    'выполнено': 'Рецепт успешно удален из списка покупок'
                 }, status=status.HTTP_204_NO_CONTENT)
         return Response(
             {

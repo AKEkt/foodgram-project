@@ -1,8 +1,10 @@
 from django.contrib.auth import get_user_model
-from rest_framework import serializers
-from .models import Ingredient, Recipes, Tag, RecipIngred, TagRecip
-from ..serializers.serializers import MyDjoserUserSerializer, Base64ImageField
 from django.shortcuts import get_object_or_404
+from rest_framework import serializers
+
+from ..serializers.serializers import Base64ImageField, MyDjoserUserSerializer
+from .models import (Favorite, Ingredient, Recipes, RecipIngred, ShoppingCart,
+                     Tag, TagRecip)
 
 User = get_user_model()
 
@@ -69,10 +71,14 @@ class RecipesSerializer(serializers.ModelSerializer):
                   'cooking_time')
 
     def get_is_favorited(self, obj):
-        return False
+        return Favorite.objects.filter(
+            user=self.context['request'].user.id, favoritrecip=obj.id
+            ).exists()
 
     def get_is_in_shopping_cart(self, obj):
-        return False
+        return ShoppingCart.objects.filter(
+            user=self.context['request'].user.id, shoprecipe=obj.id
+            ).exists()
 
 
 class IngredientRecipesCreateSerializer(serializers.ModelSerializer):
