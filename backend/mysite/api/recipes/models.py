@@ -138,11 +138,13 @@ class TagRecip(models.Model):
 class Favorite(models.Model):
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='userfavrec'
     )
     favoritrecip = models.ForeignKey(
         Recipes,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='favrecip'
     )
 
     class Meta:

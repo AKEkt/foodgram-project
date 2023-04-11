@@ -1,8 +1,14 @@
-from rest_framework import mixins, viewsets
+from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
+from rest_framework import generics, mixins, status, viewsets
+from rest_framework.response import Response
 
-from .models import Ingredient, Recipes, Tag, Favorite
-from .serializers import (IngredientsSerializer, RecipesSerializer,
-                          TagSerializer, RecipesCreateSerializer, FavoriteUserSerializer)
+from .models import Favorite, Ingredient, Recipes, Tag
+from .serializers import (IngredientsSerializer, RecipesCreateSerializer,
+                          RecipesSerializer, SubscripRecipesSerializer,
+                          TagSerializer)
+
+User = get_user_model()
 
 
 class TagsViewSet(mixins.ListModelMixin,
@@ -28,25 +34,25 @@ class RecipesViewSet(viewsets.ModelViewSet):
             return RecipesSerializer
         return RecipesCreateSerializer
 
+
 class FavoriteViewSet(generics.CreateAPIView, generics.DestroyAPIView):
-    serializer_class = FavoriteUserSerializer
-    queryset = Favorite.objects.all()
     http_method_names = ['post', 'delete']
 
-    def perform_create(self, serializer):
-        author = get_object_or_404(User,
-                                   id=self.kwargs.get('pk'))
-        serializer.save(user=self.request.user, author=author)
+    def create(self, request, *args, **kwargs):
+        recip = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
+        Favorite.objects.create(favoritrecip=recip, user=self.request.user)
+        serializer = SubscripRecipesSerializer(recip)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, *args, **kwargs):
-        author = get_object_or_404(User, id=self.kwargs.get('pk'))
-        follow_user = Follow.objects.filter(user=self.request.user,
-                                            author=author)
-        if follow_user.exists():
-            follow_user.delete()
+        recip = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
+        favorite = Favorite.objects.filter(favoritrecip=recip,
+                                           user=self.request.user)
+        if favorite.exists():
+            favorite.delete()
             return Response(
                 {
-                    'выполнено': 'Успешная отписка'
+                    'выполнено': 'Рецепт успешно удален из избранного'
                 }, status=status.HTTP_204_NO_CONTENT)
         return Response(
             {
