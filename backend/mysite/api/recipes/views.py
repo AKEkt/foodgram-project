@@ -95,4 +95,6 @@ class ShoppingCartViewSet(generics.CreateAPIView, generics.DestroyAPIView):
 
 class DownloadShopCart(generics.ListAPIView):
 
+    def get(self, request, *args, **kwargs):
+        list_recip = ShoppingCart.objects.filter(user=self.request.user)
     pass

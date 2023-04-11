@@ -78,13 +78,17 @@ class Recipes(models.Model):
     cooking_time = models.IntegerField(
         'Время приготовления в минутах'
     )
+    pub_date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата публикации'
+    )
 
     REQUIRED_FIELDS = ['name', 'image', 'text', 'cooking_time']
 
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
-        ordering = ['-id']
+        ordering = ['-pub_date']
 
     def __str__(self):
         return self.name
