@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics, mixins, status, viewsets
 from rest_framework.response import Response
 
-from .models import Favorite, Ingredient, Recipes, Tag, ShoppingCart
+from .models import Favorite, Ingredient, Recipes, ShoppingCart, Tag
 from .serializers import (IngredientsSerializer, RecipesCreateSerializer,
                           RecipesSerializer, SubscripRecipesSerializer,
                           TagSerializer)
@@ -33,6 +33,16 @@ class RecipesViewSet(viewsets.ModelViewSet):
         if self.action in ('list', 'retrieve'):
             return RecipesSerializer
         return RecipesCreateSerializer
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+        name = self.request.query_params.get("name", None)
+
+        if name is not None:
+            print(name)
+            queryset = queryset.filter(name=name)
+
+        return queryset
 
 
 class FavoriteViewSet(generics.CreateAPIView, generics.DestroyAPIView):
@@ -81,3 +91,8 @@ class ShoppingCartViewSet(generics.CreateAPIView, generics.DestroyAPIView):
             {
                 'ошибка': 'Объект не найден'
             }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DownloadShopCart(generics.ListAPIView):
+
+    pass
