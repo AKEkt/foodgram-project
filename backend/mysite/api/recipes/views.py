@@ -2,12 +2,11 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, mixins, status, viewsets
 from rest_framework.response import Response
-
 from .models import Favorite, Ingredient, Recipes, ShoppingCart, Tag
 from .serializers import (IngredientsSerializer, RecipesCreateSerializer,
                           RecipesSerializer, SubscripRecipesSerializer,
                           TagSerializer)
-
+from rest_framework import filters
 User = get_user_model()
 
 
@@ -23,6 +22,8 @@ class IngredientsViewSet(mixins.ListModelMixin,
     pagination_class = None
     queryset = Ingredient.objects.all()
     serializer_class = IngredientsSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('$name',)
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
@@ -36,12 +37,17 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
-        name = self.request.query_params.get("name", None)
-
-        if name is not None:
-            print(name)
-            queryset = queryset.filter(name=name)
-
+        slug = self.request.query_params.get("slug", None)
+        is_favorited = self.request.query_params.get('is_favorited', None)
+        in_shopping_cart = self.request.query_params.get('in_shopping_cart',
+                                                         None)
+        if slug is not None:
+            print(slug)
+            queryset = queryset.filter(tags__slug=slug)
+        if is_favorited:
+            queryset = queryset.filter(favrecip__user=self.request.user)
+        if in_shopping_cart:
+            queryset = queryset.filter(shoprecip__user=self.request.user)
         return queryset
 
 
