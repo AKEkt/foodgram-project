@@ -1,12 +1,18 @@
 from django.contrib.auth import get_user_model
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, mixins, status, viewsets
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
+from rest_framework import filters, generics, mixins, status, viewsets
 from rest_framework.response import Response
-from .models import Favorite, Ingredient, Recipes, ShoppingCart, Tag
+
+from .models import (Favorite, Ingredient, Recipes, RecipIngred, ShoppingCart,
+                     Tag)
 from .serializers import (IngredientsSerializer, RecipesCreateSerializer,
                           RecipesSerializer, SubscripRecipesSerializer,
                           TagSerializer)
-from rest_framework import filters
+
 User = get_user_model()
 
 
@@ -102,5 +108,40 @@ class ShoppingCartViewSet(generics.CreateAPIView, generics.DestroyAPIView):
 class DownloadShopCart(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
-        list_recip = ShoppingCart.objects.filter(user=self.request.user)
-    pass
+        recipes = Recipes.objects.filter(shoprecip__user=self.request.user)
+        list_recip_ing = []
+        for recip in recipes:
+
+            recip_ing = RecipIngred.objects.filter(recipesid=recip)
+            list_recip_ing += recip_ing
+            ingred = []
+        for item in list_recip_ing:
+            name = Ingredient.objects.get(name=item.ingredient).name
+            measurement_unit = Ingredient.objects.get(
+                name=item.ingredient
+            ).measurement_unit
+            amount = item.amount
+            if name in ingred:
+                ingred[ingred.index(name)+2] += amount
+            else:
+                ingred += (name, measurement_unit, amount)
+
+        response = HttpResponse(content_type='application/pdf')
+        response[
+            'Content-Disposition'
+        ] = 'attachment; filename="Ingredients.pdf"'
+        c = canvas.Canvas(response)
+        pdfmetrics.registerFont(TTFont('TimesNewRomanRegular',
+                                       'TimesNewRomanRegular.ttf'))
+        c.setFont("TimesNewRomanRegular", 18)
+        c.drawString(100, 750, 'Cписок покупок:')
+        c.setFont("TimesNewRomanRegular", 14)
+        y = 700
+        for indx in range(0, len(ingred), 3):
+            string = (f' *  {ingred[indx]} '
+                      f'({ingred[indx+1]})   —   {str(ingred[indx+2])}')
+            c.drawString(100, y, string)
+            y -= 20
+        c.showPage()
+        c.save()
+        return response

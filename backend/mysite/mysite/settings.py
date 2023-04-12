@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_filters',
     'djoser',
+    'reportlab',
     'api.recipes.apps.RecipesConfig',
     'api.users.apps.UsersConfig',
 
