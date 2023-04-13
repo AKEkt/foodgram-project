@@ -39,7 +39,7 @@ class Ingredient(models.Model):
     )
     measurement_unit = models.CharField(
         "Единица измерения",
-        max_length=5,
+        max_length=50,
     )
 
     REQUIRED_FIELDS = ['name', 'measurement_unit']
