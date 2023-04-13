@@ -1,9 +1,10 @@
-from ..recipes.models import Recipes
-from ..recipes.serializers import SubscripRecipesSerializer
 from django.contrib.auth import get_user_model
 from djoser.conf import settings
 from djoser.serializers import TokenCreateSerializer
 from rest_framework import serializers
+
+from ..recipes.models import Recipes
+from ..recipes.serializers import SubscripRecipesSerializer
 from .models import Follow
 
 User = get_user_model()

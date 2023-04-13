@@ -5,6 +5,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from rest_framework import filters, generics, mixins, status, viewsets
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import (Favorite, Ingredient, Recipes, RecipIngred, ShoppingCart,
@@ -21,6 +22,7 @@ class TagsViewSet(mixins.ListModelMixin,
     pagination_class = None
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    http_method_names = ['get']
 
 
 class IngredientsViewSet(mixins.ListModelMixin,
@@ -30,6 +32,7 @@ class IngredientsViewSet(mixins.ListModelMixin,
     serializer_class = IngredientsSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('$name',)
+    http_method_names = ['get']
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
@@ -58,9 +61,16 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
 
 class FavoriteViewSet(generics.CreateAPIView, generics.DestroyAPIView):
+    http_method_names = ['post', 'delete']
 
     def create(self, request, *args, **kwargs):
         recip = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
+        if Favorite.objects.filter(favoritrecip=recip,
+                                   user=self.request.user).exists():
+            return Response(
+                {
+                    'ошибка': 'Рецепт уже есть в избранном!'
+                }, status=status.HTTP_400_BAD_REQUEST)
         Favorite.objects.create(favoritrecip=recip, user=self.request.user)
         serializer = SubscripRecipesSerializer(recip)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -73,18 +83,25 @@ class FavoriteViewSet(generics.CreateAPIView, generics.DestroyAPIView):
             favorite.delete()
             return Response(
                 {
-                    'выполнено': 'Рецепт успешно удален из избранного'
+                    'выполнено': 'Рецепт успешно удален из избранного!'
                 }, status=status.HTTP_204_NO_CONTENT)
         return Response(
             {
-                'ошибка': 'Объект не найден'
+                'ошибка': 'Объект не найден!'
             }, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ShoppingCartViewSet(generics.CreateAPIView, generics.DestroyAPIView):
+    http_method_names = ['post', 'delete']
 
     def create(self, request, *args, **kwargs):
         recip = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
+        if ShoppingCart.objects.filter(shoprecipe=recip,
+                                       user=self.request.user).exists():
+            return Response(
+                {
+                    'ошибка': 'Рецепт уже есть в списке покупок!'
+                }, status=status.HTTP_400_BAD_REQUEST)
         ShoppingCart.objects.create(shoprecipe=recip, user=self.request.user)
         serializer = SubscripRecipesSerializer(recip)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -97,15 +114,17 @@ class ShoppingCartViewSet(generics.CreateAPIView, generics.DestroyAPIView):
             favorite.delete()
             return Response(
                 {
-                    'выполнено': 'Рецепт успешно удален из списка покупок'
+                    'выполнено': 'Рецепт успешно удален из списка покупок!'
                 }, status=status.HTTP_204_NO_CONTENT)
         return Response(
             {
-                'ошибка': 'Объект не найден'
+                'ошибка': 'Объект не найден!'
             }, status=status.HTTP_400_BAD_REQUEST)
 
 
 class DownloadShopCart(generics.ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    http_method_names = ['get']
 
     def get(self, request, *args, **kwargs):
         recipes = Recipes.objects.filter(shoprecip__user=self.request.user)
