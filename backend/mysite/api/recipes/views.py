@@ -4,10 +4,11 @@ from django.shortcuts import get_object_or_404
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
-from rest_framework import filters, generics, mixins, status, viewsets
+from rest_framework import generics, mixins, status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from django.db.models import Q
 from .models import (Favorite, Ingredient, Recipes, RecipIngred, ShoppingCart,
                      Tag)
 from .serializers import (IngredientsSerializer, RecipesCreateSerializer,
@@ -30,13 +31,20 @@ class IngredientsViewSet(mixins.ListModelMixin,
     pagination_class = None
     queryset = Ingredient.objects.all()
     serializer_class = IngredientsSerializer
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('$name',)
     http_method_names = ['get']
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+        name = self.request.query_params.get("name", None)
+
+        if name is not None:
+            print(name)
+            queryset = queryset.filter(name__istartswith=name)
+        return queryset
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
-    queryset = Recipes.objects.all()
+    # queryset = Recipes.objects.all()
     http_method_names = ['get', 'post', 'patch', 'delete']
 
     def get_serializer_class(self):
@@ -44,15 +52,18 @@ class RecipesViewSet(viewsets.ModelViewSet):
             return RecipesSerializer
         return RecipesCreateSerializer
 
+    def get_queryset(self):
+        tags = self.request.query_params.get("tags", None)
+        if tags is not None:
+            queryset = Recipes.objects.filter(tags__slug=tags)
+            return queryset
+        return Recipes.objects.all()
+
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
-        slug = self.request.query_params.get("slug", None)
         is_favorited = self.request.query_params.get('is_favorited', None)
         in_shopping_cart = self.request.query_params.get('in_shopping_cart',
                                                          None)
-        if slug is not None:
-            print(slug)
-            queryset = queryset.filter(tags__slug=slug)
         if is_favorited:
             queryset = queryset.filter(favrecip__user=self.request.user)
         if in_shopping_cart:
@@ -65,12 +76,6 @@ class FavoriteViewSet(generics.CreateAPIView, generics.DestroyAPIView):
 
     def create(self, request, *args, **kwargs):
         recip = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
-        if Favorite.objects.filter(favoritrecip=recip,
-                                   user=self.request.user).exists():
-            return Response(
-                {
-                    'ошибка': 'Рецепт уже есть в избранном!'
-                }, status=status.HTTP_400_BAD_REQUEST)
         Favorite.objects.create(favoritrecip=recip, user=self.request.user)
         serializer = SubscripRecipesSerializer(recip)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
