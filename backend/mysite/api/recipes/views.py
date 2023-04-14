@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
@@ -8,7 +9,7 @@ from rest_framework import generics, mixins, status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from django.db.models import Q
+from .filters import TagsFilterSet
 from .models import (Favorite, Ingredient, Recipes, RecipIngred, ShoppingCart,
                      Tag)
 from .serializers import (IngredientsSerializer, RecipesCreateSerializer,
@@ -44,29 +45,25 @@ class IngredientsViewSet(mixins.ListModelMixin,
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
-    # queryset = Recipes.objects.all()
+    queryset = Recipes.objects.all()
     http_method_names = ['get', 'post', 'patch', 'delete']
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TagsFilterSet
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
             return RecipesSerializer
         return RecipesCreateSerializer
 
-    def get_queryset(self):
-        tags = self.request.query_params.get("tags", None)
-        if tags is not None:
-            queryset = Recipes.objects.filter(tags__slug=tags)
-            return queryset
-        return Recipes.objects.all()
-
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
         is_favorited = self.request.query_params.get('is_favorited', None)
-        in_shopping_cart = self.request.query_params.get('in_shopping_cart',
-                                                         None)
+        is_in_shopping_cart = self.request.query_params.get(
+            'is_in_shopping_cart', None
+        )
         if is_favorited:
             queryset = queryset.filter(favrecip__user=self.request.user)
-        if in_shopping_cart:
+        elif is_in_shopping_cart:
             queryset = queryset.filter(shoprecip__user=self.request.user)
         return queryset
 
