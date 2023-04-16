@@ -39,7 +39,7 @@ jobs:
           with:
             push: true
             context: backend/mysite
-            file: mysite/Dockerfile
+            file: ./Dockerfile
             tags: antonekburg/foodback:latest
   deploy:
       runs-on: ubuntu-latest
