@@ -20,7 +20,7 @@ class MyDjoserUserSerializer(UserSerializer):
     def get_is_subscribed(self, obj):
         return Follow.objects.filter(
             user=self.context['request'].user.id, author=obj.id
-            ).exists()
+        ).exists()
 
 
 class Base64ImageField(serializers.ImageField):

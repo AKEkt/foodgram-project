@@ -27,10 +27,8 @@ class CustomUsersViewSet(UserViewSet):
         detail=False,
         methods=('get',), )
     def me(self, request):
-        instance = request.user
-        if request.method == 'GET':
-            serializer = self.get_serializer(instance)
-            return Response(serializer.data)
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
         queryset = User.objects.all()
@@ -44,9 +42,7 @@ class ListSubscripViewSet(UserViewSet):
     http_method_names = ['get']
 
     def get_queryset(self):
-        return Follow.objects.filter(
-           user=self.request.user
-        )
+        return Follow.objects.filter(user=self.request.user)
 
 
 class FollowViewSet(generics.CreateAPIView, generics.DestroyAPIView):

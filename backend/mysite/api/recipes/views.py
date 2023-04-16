@@ -40,7 +40,7 @@ class IngredientsViewSet(mixins.ListModelMixin,
 
         if name is not None:
             print(name)
-            queryset = queryset.filter(name__istartswith=name)
+            return queryset.filter(name__istartswith=name)
         return queryset
 
 
@@ -64,7 +64,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         if is_favorited:
             queryset = queryset.filter(favrecip__user=self.request.user)
         elif is_in_shopping_cart:
-            queryset = queryset.filter(shoprecip__user=self.request.user)
+            return queryset.filter(shoprecip__user=self.request.user)
         return queryset
 
 
@@ -143,7 +143,7 @@ class DownloadShopCart(generics.ListAPIView):
             ).measurement_unit
             amount = item.amount
             if name in ingred:
-                ingred[ingred.index(name)+2] += amount
+                ingred[ingred.index(name) + 2] += amount
             else:
                 ingred += (name, measurement_unit, amount)
 
