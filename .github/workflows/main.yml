@@ -59,7 +59,7 @@ jobs:
               sudo docker-compose stop
               sudo docker pull antonekburg/foodback:latest
               sudo docker pull antonekburg/foodfront:latest
-              rm -rf foodgram-project-react/
+              sudo rm -rf foodgram-project-react/
               git clone git@github.com:AKEkt/foodgram-project-react.git
               cd foodgram-project-react/infra
               rm .env
