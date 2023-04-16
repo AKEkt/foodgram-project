@@ -9,9 +9,7 @@ services:
     env_file:
       - ./.env
   backend:
-    build:
-      context: ../backend/mysite
-      dockerfile: Dockerfile
+    image: antonekburg/foodback
     restart: always
     volumes:
       - static_value:/app/static/
@@ -21,9 +19,7 @@ services:
     env_file:
       - ./.env
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: antonekburg/foodfront
     volumes:
       - ../frontend/:/app/result_build/
   nginx:
