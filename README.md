@@ -5,7 +5,8 @@
     на публикации других пользователей, добавлять понравившиеся рецепты в список 
     «Избранное», а перед походом в магазин скачивать сводный список продуктов, 
     необходимых для приготовления одного или нескольких выбранных блюд.
-# ![example workflow](https://github.com/AKEkt/foodgram_project_react/actions/workflows/main.yml/badge.svg)
+	
+# ![example workflow](https://github.com/AKEkt//foodgram-project-react/actions/workflows/main.yml/badge.svg)
 
 ## Шаблон наполнения env-файла:
 	
