@@ -1,4 +1,4 @@
-name: Api_yamdb workflow
+name: Foodgram workflow
 
 on: [push]
 
@@ -38,9 +38,9 @@ jobs:
           uses: docker/build-push-action@v2 
           with:
             push: true
-            tags: antonekburg/foodback:latest
-            context: backend
+            context: backend/mysite
             file: mysite/Dockerfile
+            tags: antonekburg/foodback:latest
   deploy:
       runs-on: ubuntu-latest
       needs: build_and_push_to_docker_hub
