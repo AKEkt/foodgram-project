@@ -38,9 +38,9 @@ jobs:
           uses: docker/build-push-action@v2 
           with:
             push: true
-            context: ../backend/mysite
             tags: antonekburg/foodback:latest
-            file: Dockerfile
+            context: backend
+            file: mysite/Dockerfile
   deploy:
       runs-on: ubuntu-latest
       needs: build_and_push_to_docker_hub
