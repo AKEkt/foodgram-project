@@ -58,7 +58,7 @@ sudo docker-compose exec backend python manage.py collectstatic --no-input
 - Убедится что приложение становится доступным по адресу http://85.208.208.227/admin/ и статика подгрузилась
 - Войти в админку создать одну-две записи объектов или загрузить тестовые данные из dump.json
 - Файл dump.json сохранится в директорию /infra
-- Узнать CONTAINER ID для образа infra_web:
+- Узнать CONTAINER ID для образа infra_backend:
 ```
 sudo docker container ls -a
 ```
