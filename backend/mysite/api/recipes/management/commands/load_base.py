@@ -13,7 +13,6 @@ class Command(BaseCommand):
             'r',
             encoding='utf-8'
         ) as csv_file:
-            id = 1
             reader = csv.DictReader(csv_file)
             Ingredient.objects.bulk_create(
                 Ingredient(**data) for data in reader)
