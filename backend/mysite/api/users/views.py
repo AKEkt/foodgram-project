@@ -23,9 +23,8 @@ class CustomUsersViewSet(UserViewSet):
     http_method_names = ['get', 'post']
 
     def get_queryset(self):
-        queryset = User.objects.all()
         if self.action == "list":
-            return queryset
+            return User.objects.all()
         return User.objects.filter(id=self.kwargs.get('pk'))
 
     @action(
