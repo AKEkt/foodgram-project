@@ -8,73 +8,81 @@
 	
 # ![example workflow](https://github.com/AKEkt//foodgram-project-react/actions/workflows/main.yml/badge.svg)
 
-## Шаблон наполнения env-файла:
-	
-	DB_ENGINE=django.db.backends.postgresql # указываем, что работаем с postgresql
-	DB_NAME=postgres # имя базы данных
-	POSTGRES_USER=postgres # логин для подключения к базе данных
-	POSTGRES_PASSWORD=postgres # пароль для подключения к БД (установите свой)
-	DB_HOST=db # название сервиса (контейнера)
-	DB_PORT=5432 # порт для подключения к БД 
-	
+## Запуск проекта на боевом сервере.
 
-## Команды для запуска приложения в контейнерах
-
+- Войти на удаленный сервер в облаке:
+```
+ssh <имя_пользователя>@<публичный_IP-адрес_виртуальной_машины>
+```
+- Остановить службу nginx:
+```
+sudo systemctl stop nginx
+```
 - Установить Docker и Docker Compose https://docs.docker.com/compose/install/:
 ```
 sudo apt install docker-ce docker-compose -y
 ```
-- Клонировать репозиторий и перейти в него в командной строке:
+- В файле main.yml измените следующие строки:
 ```
-git clone git@github.com:AKEkt/foodgram-project-react.git
+tags: <логин_на_dockerhub>/<репозиторий_на_dockerhub:latest>
+sudo docker pull <логин_на_dockerhub>/<репозиторий_на_dockerhub:latest>
+sudo docker ps -aqf "name=<имя_пользователя_web_1>"
+
 ```
-- Перейти в директорию /infra
+- Скопировать файлы из проекта на сервер:
 ```
-cd infra
+В облаке в home/<имя_пользователя>/ создать папку mkdir infra и mkdir docs
+Скопировать из проекта:
+infra/docker-compose.yaml и infra/dump.json в infra/,
+docs/redoc.yaml и docs/openapi-schema.yml в в home/<имя_пользователя>/docs, 
+nginx/default.conf в infra/nginx/
 ```
-- Создать файл .env с переменными окружения
+- Для подключения GitHub Actions необходимо создать директорию .github/workflows и скопировать в него main.yml
+
+- В настройках репозитория Settings перейти в Secrets and variables -> Actions и 
+добавить следующие переменные окружения, токены и пароли:
 ```
-sudo nano .env
+    DOCKER_USERNAME - имя_пользователя для подключения к dockerhub
+    DOCKER_PASSWORD - пароль_пользователя dockerhub
+    HOST - IP-адрес боевого сервера
+    USER - имя_пользователя для подключения к боевому серверу
+    SSH_KEY - приватный ключ с компьютера, имеющего доступ к боевому серверу (cat ~/.ssh/id_rsa)
+    SECRET_KEY - секретный ключ в api_yamdb/settings.py
+    DB_ENGINE - указываем, что работаем с postgresql (django.db.backends.postgresql) 
+    DB_NAME - имя базы данных (postgres)
+    POSTGRES_USER - логин для подключения к базе данных (postgres)
+    POSTGRES_PASSWORD - пароль для подключения к БД (установите свой)
+    DB_HOST - название сервиса (контейнера - db)
+    DB_PORT - порт для подключения к БД (5432)
+    TELEGRAM_ID - ID телеграм-аккаунта
+    TELEGRAM_TOKEN - токен бота
 ```
-- Развёрнуть контейнеры в «фоновом режиме» командой:
+- Сделать коммит и запушить его в удалённый репозиторий:
 ```
-sudo docker-compose up -d --build
+git commit -m 'комментарий'
+git push 
 ```
-- Убедится что контейнеры запущены:
+- Перейти во вкладку Actions
+- Результат выполнения workflow назван именем коммита
+- Все steps успешно выполнились
+- Войти на удаленный сервер в облаке:
 ```
-sudo docker stats 
-```
-- В контейнере web выполнить миграции:
-```
-sudo docker-compose exec backend python manage.py makemigrations
-sudo docker-compose exec backend python manage.py migrate
-```
-- Создать суперпользователя:
-```
-sudo docker-compose exec backend python manage.py createsuperuser
-```
-- Собрать статику:
-```
-sudo docker-compose exec backend python manage.py collectstatic --no-input 
-```
-- Убедится что приложение становится доступным по адресу http://85.208.208.227/admin/ и статика подгрузилась
-- Войти в админку создать одну-две записи объектов или загрузить тестовые данные из dump.json
-- Файл dump.json сохранится в директорию /infra
-- Узнать CONTAINER ID для образа infra_backend:
-```
-sudo docker container ls -a
-```
-- Скопировать файл "dump.json" в контейнер:
-```
-sudo docker cp dump.json <CONTAINER ID>:/app
-sudo docker-compose exec backend python manage.py loaddata dump.json
-```
-- Протестировать приложение через Postman
-```
-GET /api/users/
-```
+ssh <имя_пользователя>@<публичный_IP-адрес_виртуальной_машины>
 - Создать дамп (резервную копию) базы данных:
 ```
 sudo docker-compose exec backend python manage.py dumpdata > fixtures.json
 ```
+- Файл fixtures.json сохранится в директорию /infra
 
+
+## Административная панель Django доступна по адресу:
+
+http://158.160.24.28/admin/
+
+## Докуметация по адресу:
+
+http://158.160.24.28/api/docs/
+
+## Сайт Foodgram:
+
+http://158.160.24.28/
