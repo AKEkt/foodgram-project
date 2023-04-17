@@ -3,7 +3,6 @@ from django.shortcuts import get_object_or_404
 from djoser.views import TokenCreateView, UserViewSet
 from rest_framework import generics, status
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from ..serializers.serializers import MyDjoserUserSerializer
@@ -18,7 +17,6 @@ class CustomTokenCreateView(TokenCreateView):
 
 
 class CustomUsersViewSet(UserViewSet):
-    permission_classes = (AllowAny,)
     serializer_class = MyDjoserUserSerializer
     http_method_names = ['get', 'post']
 
