@@ -59,7 +59,7 @@ jobs:
               sudo docker-compose stop
               sudo docker pull antonekburg/foodback:latest
               sudo docker pull antonekburg/foodfront:latest
-              cd foodgram-project-react/infra
+              cd infra/
               rm .env
               touch .env
               echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
