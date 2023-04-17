@@ -23,7 +23,10 @@ class CustomUsersViewSet(UserViewSet):
     http_method_names = ['get', 'post']
 
     def get_queryset(self):
-        return User.objects.all()
+        queryset = User.objects.all()
+        if self.action == "list":
+            return queryset
+        return queryset.filter(id=self.kwargs.get('pk'))
 
     @action(
         detail=False,
@@ -32,11 +35,11 @@ class CustomUsersViewSet(UserViewSet):
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
 
-    def retrieve(self, request, pk=None):
-        queryset = User.objects.all()
-        user = get_object_or_404(queryset, pk=pk)
-        serializer = self.get_serializer(user)
-        return Response(serializer.data)
+    # def retrieve(self, request, pk=None):
+    #     queryset = User.objects.all()
+    #     user = get_object_or_404(queryset, pk=pk)
+    #     serializer = self.get_serializer(user)
+    #     return Response(serializer.data)
 
 
 class ListSubscripViewSet(UserViewSet):

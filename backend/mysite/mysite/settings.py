@@ -170,6 +170,7 @@ DJOSER = {
         'user_list': ['rest_framework.permissions.AllowAny'],
 
     },
+
 }
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r'^/api/.*$'
