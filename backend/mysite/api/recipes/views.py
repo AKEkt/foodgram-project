@@ -61,6 +61,9 @@ class RecipesViewSet(viewsets.ModelViewSet):
         is_in_shopping_cart = self.request.query_params.get(
             'is_in_shopping_cart', None
         )
+        author = self.request.query_params.get('author', None)
+        if author is not None:
+            queryset = queryset.filter(author=author)
         if is_favorited:
             queryset = queryset.filter(favrecip__user=self.request.user)
         elif is_in_shopping_cart:
