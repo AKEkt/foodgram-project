@@ -26,7 +26,6 @@ sudo apt install docker-ce docker-compose -y
 ```
 tags: <логин_на_dockerhub>/<репозиторий_на_dockerhub:latest>
 sudo docker pull <логин_на_dockerhub>/<репозиторий_на_dockerhub:latest>
-sudo docker ps -aqf "name=<имя_пользователя_web_1>"
 
 ```
 - Скопировать файлы из проекта на сервер:
