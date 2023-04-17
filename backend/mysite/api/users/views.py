@@ -26,7 +26,7 @@ class CustomUsersViewSet(UserViewSet):
         queryset = User.objects.all()
         if self.action == "list":
             return queryset
-        return queryset.filter(id=self.kwargs.get('pk'))
+        return queryset.filter(pk=self.kwargs.get('pk'))
 
     @action(
         detail=False,
