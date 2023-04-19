@@ -1,3 +1,5 @@
+from api.serializers import (MyDjoserUserSerializer, MyTokenCreateSerializer,
+                             SubscripUserSerializer)
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.views import TokenCreateView, UserViewSet
@@ -5,8 +7,6 @@ from rest_framework import generics, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..api.serializers import (MyDjoserUserSerializer, MyTokenCreateSerializer,
-                               SubscripUserSerializer)
 from .models import Follow
 
 User = get_user_model()

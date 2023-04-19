@@ -162,9 +162,9 @@ REST_FRAMEWORK = {
 }
 DJOSER = {
     'SERIALIZERS': {
-        'token_create': 'api.users.serializers.MyTokenCreateSerializer',
-        'user': 'api.serializers.serializers.MyDjoserUserSerializer',
-        'current_user': 'api.serializers.serializers.MyDjoserUserSerializer',
+        'token_create': 'api.serializers.MyTokenCreateSerializer',
+        'user': 'api.serializers.MyDjoserUserSerializer',
+        'current_user': 'api.serializers.MyDjoserUserSerializer',
     },
     'PERMISSIONS': {
         'user_list': ['rest_framework.permissions.AllowAny'],

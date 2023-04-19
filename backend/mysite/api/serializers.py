@@ -2,11 +2,11 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.conf import settings
 from djoser.serializers import TokenCreateSerializer, UserSerializer
+from recipes.models import (Favorite, Ingredient, Recipes, RecipIngred,
+                            ShoppingCart, Tag, TagRecip)
 from rest_framework import serializers
+from users.models import Follow
 
-from ..recipes.models import (Favorite, Ingredient, Recipes, RecipIngred,
-                              ShoppingCart, Tag, TagRecip)
-from ..users.models import Follow
 from .fields import Base64ImageField
 
 User = get_user_model()
@@ -113,13 +113,15 @@ class RecipesCreateUpdateSerializer(RecipesSerializer):
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
-        recip = Recipes.objects.create(**validated_data,
-                                       author=self.context['request'].user)
+        recip = Recipes.objects.create(
+            **validated_data,
+            author=self.context['request'].user
+        )
         for ingredient in ingredients:
             id, amount = ingredient.values()
             curr_ingredient = Ingredient.objects.get(id=id)
             RecipIngred.objects.create(ingredient=curr_ingredient,
-                                       recipesid=recip,
+                                       ecipesid=recip,
                                        amount=amount)
         for tag in tags:
             curr_tags = Tag.objects.get(id=tag)
@@ -137,8 +139,10 @@ class RecipesCreateUpdateSerializer(RecipesSerializer):
         for ingredient in ingredients:
             id, amount = ingredient.values()
             curr_ingredient = get_object_or_404(Ingredient, id=id)
-            RecipIngred.objects.create(ingredient=curr_ingredient,
-                                       recipesid=instance, amount=amount)
+            RecipIngred.objects.create(
+                ingredient=curr_ingredient,
+                recipesid=instance, amount=amount
+            )
         TagRecip.objects.filter(recipesid=instance).delete()
         tags = validated_data.get("tags")
         for tag in tags:

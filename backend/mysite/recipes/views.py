@@ -1,3 +1,7 @@
+from api.filters import TagsFilterSet
+from api.serializers import (IngredientsSerializer,
+                             RecipesCreateUpdateSerializer, RecipesSerializer,
+                             SubscripRecipesSerializer, TagSerializer)
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -9,11 +13,6 @@ from rest_framework import generics, mixins, status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from ..api.filters import TagsFilterSet
-from ..api.serializers import (IngredientsSerializer,
-                               RecipesCreateUpdateSerializer,
-                               RecipesSerializer, SubscripRecipesSerializer,
-                               TagSerializer)
 from .models import (Favorite, Ingredient, Recipes, RecipIngred, ShoppingCart,
                      Tag)
 

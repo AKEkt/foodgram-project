@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 
-from ..recipes.models import (Favorite, Ingredient, Recipes, RecipIngred,
-                              ShoppingCart, Tag, TagRecip)
-from ..users.models import Follow
+from recipes.models import (Favorite, Ingredient, Recipes, RecipIngred,
+                            ShoppingCart, Tag, TagRecip)
+from users.models import Follow
 
 User = get_user_model()
 
