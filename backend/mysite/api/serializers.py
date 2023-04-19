@@ -2,8 +2,8 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.conf import settings
 from djoser.serializers import TokenCreateSerializer, UserSerializer
-from recipes.models import (Favorite, Ingredient, Recipes, RecipIngred,
-                            ShoppingCart, Tag, TagRecip)
+from recipes.models import (Favorite, Ingredient, RecipeIngred, Recipes,
+                            ShoppingCart, Tag, TagRecipe)
 from rest_framework import serializers
 from users.models import Follow
 
@@ -54,7 +54,7 @@ class IngredientRecipesSerializer(IngredientsSerializer):
     )
 
     class Meta(IngredientsSerializer.Meta):
-        model = RecipIngred
+        model = RecipeIngred
         fields = IngredientsSerializer.Meta.fields + ('amount',)
 
 
@@ -97,7 +97,7 @@ class IngredientRecipesCreateSerializer(serializers.ModelSerializer):
     amount = serializers.IntegerField(write_only=True)
 
     class Meta:
-        model = RecipIngred
+        model = RecipeIngred
         fields = ('id',
                   'amount',)
 
@@ -113,20 +113,20 @@ class RecipesCreateUpdateSerializer(RecipesSerializer):
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
-        recip = Recipes.objects.create(
+        recipe = Recipes.objects.create(
             **validated_data,
             author=self.context['request'].user
         )
         for ingredient in ingredients:
             id, amount = ingredient.values()
             curr_ingredient = Ingredient.objects.get(id=id)
-            RecipIngred.objects.create(ingredient=curr_ingredient,
-                                       ecipesid=recip,
-                                       amount=amount)
+            RecipeIngred.objects.create(ingredient=curr_ingredient,
+                                        recipesid=recipe,
+                                        amount=amount)
         for tag in tags:
             curr_tags = Tag.objects.get(id=tag)
-            TagRecip.objects.create(recipesid=recip, tag=curr_tags)
-        return recip
+            TagRecipe.objects.create(recipesid=recipe, tag=curr_tags)
+        return recipe
 
     def update(self, instance, validated_data):
         instance.image = validated_data.get("image", instance.image)
@@ -134,20 +134,20 @@ class RecipesCreateUpdateSerializer(RecipesSerializer):
         instance.text = validated_data.get("text", instance.text)
         instance.cooking_time = validated_data.get("cooking_time",
                                                    instance.cooking_time)
-        RecipIngred.objects.filter(recipesid=instance).delete()
+        RecipeIngred.objects.filter(recipesid=instance).delete()
         ingredients = validated_data.get("ingredients")
         for ingredient in ingredients:
             id, amount = ingredient.values()
             curr_ingredient = get_object_or_404(Ingredient, id=id)
-            RecipIngred.objects.create(
+            RecipeIngred.objects.create(
                 ingredient=curr_ingredient,
                 recipesid=instance, amount=amount
             )
-        TagRecip.objects.filter(recipesid=instance).delete()
+        TagRecipe.objects.filter(recipesid=instance).delete()
         tags = validated_data.get("tags")
         for tag in tags:
             curr_tags = get_object_or_404(Tag, id=tag)
-            TagRecip.objects.create(recipesid=instance, tag=curr_tags)
+            TagRecipe.objects.create(recipesid=instance, tag=curr_tags)
         instance.save()
         return instance
 

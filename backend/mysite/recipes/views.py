@@ -13,7 +13,7 @@ from rest_framework import generics, mixins, status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import (Favorite, Ingredient, Recipes, RecipIngred, ShoppingCart,
+from .models import (Favorite, Ingredient, RecipeIngred, Recipes, ShoppingCart,
                      Tag)
 
 User = get_user_model()
@@ -65,9 +65,9 @@ class RecipesViewSet(viewsets.ModelViewSet):
         if author is not None:
             queryset = queryset.filter(author=author)
         if is_favorited:
-            queryset = queryset.filter(favrecip__user=self.request.user)
+            queryset = queryset.filter(favrecipe__user=self.request.user)
         elif is_in_shopping_cart:
-            return queryset.filter(shoprecip__user=self.request.user)
+            return queryset.filter(shoprecipe__user=self.request.user)
         return queryset
 
 
@@ -75,14 +75,14 @@ class FavoriteViewSet(generics.CreateAPIView, generics.DestroyAPIView):
     http_method_names = ['post', 'delete']
 
     def create(self, request, *args, **kwargs):
-        recip = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
-        Favorite.objects.create(favoritrecip=recip, user=self.request.user)
-        serializer = SubscripRecipesSerializer(recip)
+        recipe = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
+        Favorite.objects.create(favoriterecipe=recipe, user=self.request.user)
+        serializer = SubscripRecipesSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, *args, **kwargs):
-        recip = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
-        favorite = Favorite.objects.filter(favoritrecip=recip,
+        recipe = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
+        favorite = Favorite.objects.filter(favoriterecipe=recipe,
                                            user=self.request.user)
         if favorite.exists():
             favorite.delete()
@@ -100,20 +100,20 @@ class ShoppingCartViewSet(generics.CreateAPIView, generics.DestroyAPIView):
     http_method_names = ['post', 'delete']
 
     def create(self, request, *args, **kwargs):
-        recip = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
-        if ShoppingCart.objects.filter(shoprecipe=recip,
+        recipe = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
+        if ShoppingCart.objects.filter(shoprecipe=recipe,
                                        user=self.request.user).exists():
             return Response(
                 {
                     'ошибка': 'Рецепт уже есть в списке покупок!'
                 }, status=status.HTTP_400_BAD_REQUEST)
-        ShoppingCart.objects.create(shoprecipe=recip, user=self.request.user)
-        serializer = SubscripRecipesSerializer(recip)
+        ShoppingCart.objects.create(shoprecipe=recipe, user=self.request.user)
+        serializer = SubscripRecipesSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, *args, **kwargs):
-        recip = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
-        favorite = ShoppingCart.objects.filter(shoprecipe=recip,
+        recipe = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
+        favorite = ShoppingCart.objects.filter(shoprecipe=recipe,
                                                user=self.request.user)
         if favorite.exists():
             favorite.delete()
@@ -132,14 +132,14 @@ class DownloadShopCart(generics.ListAPIView):
     http_method_names = ['get']
 
     def get(self, request, *args, **kwargs):
-        recipes = Recipes.objects.filter(shoprecip__user=self.request.user)
-        list_recip_ing = []
-        for recip in recipes:
+        recipes = Recipes.objects.filter(shoprecipe__user=self.request.user)
+        list_recipe_ing = []
+        for recipe in recipes:
 
-            recip_ing = RecipIngred.objects.filter(recipesid=recip)
-            list_recip_ing += recip_ing
+            recipe_ing = RecipeIngred.objects.filter(recipesid=recipe)
+            list_recipe_ing += recipe_ing
             ingred = []
-        for item in list_recip_ing:
+        for item in list_recipe_ing:
             name = Ingredient.objects.get(name=item.ingredient).name
             measurement_unit = Ingredient.objects.get(
                 name=item.ingredient

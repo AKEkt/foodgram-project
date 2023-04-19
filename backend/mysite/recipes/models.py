@@ -57,13 +57,14 @@ class Ingredient(models.Model):
 
 
 class Recipes(models.Model):
-    tags = models.ManyToManyField(Tag, through='TagRecip', verbose_name='Теги')
+    tags = models.ManyToManyField(Tag, through='TagRecipe',
+                                  verbose_name='Теги')
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         verbose_name='Автор'
     )
-    ingredients = models.ManyToManyField(Ingredient, through='RecipIngred')
+    ingredients = models.ManyToManyField(Ingredient, through='RecipeIngred')
     name = models.CharField(
         'Название',
         max_length=150,
@@ -78,7 +79,7 @@ class Recipes(models.Model):
         'Текстовое описание',
         max_length=150
     )
-    cooking_time = models.IntegerField(
+    cooking_time = models.PositiveSmallIntegerField(
         'Время приготовления в минутах'
     )
     pub_date = models.DateTimeField(
@@ -97,11 +98,11 @@ class Recipes(models.Model):
         return self.name
 
 
-class RecipIngred(models.Model):
+class RecipeIngred(models.Model):
     recipesid = models.ForeignKey(
         Recipes,
         on_delete=models.CASCADE,
-        related_name='recip_ing',
+        related_name='recipe_ing',
         verbose_name='Рецепт'
     )
     ingredient = models.ForeignKey(
@@ -123,11 +124,11 @@ class RecipIngred(models.Model):
         return f'{self.recipesid}: {self.ingredient}-{self.amount}'
 
 
-class TagRecip(models.Model):
+class TagRecipe(models.Model):
     recipesid = models.ForeignKey(
         Recipes,
         on_delete=models.CASCADE,
-        related_name='recip_tag',
+        related_name='recipe_tag',
         verbose_name='Рецепт'
     )
     tag = models.ForeignKey(
@@ -153,10 +154,10 @@ class Favorite(models.Model):
         related_name='userfav',
         verbose_name='Пользователь'
     )
-    favoritrecip = models.ForeignKey(
+    favoriterecipe = models.ForeignKey(
         Recipes,
         on_delete=models.CASCADE,
-        related_name='favrecip',
+        related_name='favrecipe',
         verbose_name='Рецепт'
     )
 
@@ -176,7 +177,7 @@ class ShoppingCart(models.Model):
     shoprecipe = models.ForeignKey(
         Recipes,
         on_delete=models.CASCADE,
-        related_name='shoprecip',
+        related_name='shoprecipe',
         verbose_name='Рецепт'
     )
 

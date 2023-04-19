@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
-from recipes.models import (Favorite, Ingredient, Recipes, RecipIngred,
-                            ShoppingCart, Tag, TagRecip)
+from recipes.models import (Favorite, Ingredient, RecipeIngred, Recipes,
+                            ShoppingCart, Tag, TagRecipe)
 from users.models import Follow
 
 User = get_user_model()
@@ -48,14 +48,14 @@ class TagAdmin(admin.ModelAdmin):
     color.short_description = 'Цветовой HEX-код'
 
 
-class RecipIngredAdmin(admin.ModelAdmin):
+class RecipeIngredAdmin(admin.ModelAdmin):
     list_display = ('recipesid', 'ingredient', 'amount',)
     list_filter = ('recipesid', 'ingredient', )
     list_editable = ('ingredient', 'amount',)
     empty_value_display = '-пусто-'
 
 
-class TagRecipAdmin(admin.ModelAdmin):
+class TagRecipeAdmin(admin.ModelAdmin):
     list_display = ('recipesid', 'tag',)
     list_filter = ('tag',)
     list_editable = ('tag',)
@@ -63,9 +63,9 @@ class TagRecipAdmin(admin.ModelAdmin):
 
 
 class FavoriteAdmin(admin.ModelAdmin):
-    list_display = ('user', 'favoritrecip',)
-    list_filter = ('favoritrecip',)
-    list_editable = ('favoritrecip',)
+    list_display = ('user', 'favoriterecipe',)
+    list_filter = ('favoriterecipe',)
+    list_editable = ('favoriterecipe',)
     empty_value_display = '-пусто-'
 
 
@@ -81,7 +81,7 @@ admin.site.register(Recipes, RecipesAdmin)
 admin.site.register(Ingredient, IngredientAdmin)
 admin.site.register(Follow, FollowAdmin)
 admin.site.register(Tag, TagAdmin)
-admin.site.register(RecipIngred, RecipIngredAdmin)
-admin.site.register(TagRecip, TagRecipAdmin)
+admin.site.register(RecipeIngred, RecipeIngredAdmin)
+admin.site.register(TagRecipe, TagRecipeAdmin)
 admin.site.register(Favorite, FavoriteAdmin)
 admin.site.register(ShoppingCart, ShoppingCartAdmin)
