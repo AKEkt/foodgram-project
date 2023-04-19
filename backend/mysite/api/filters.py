@@ -1,5 +1,5 @@
 import django_filters
-from recipes import models
+from recipes.models import Recipes
 
 
 class TagsFilterSet(django_filters.FilterSet):
@@ -8,5 +8,5 @@ class TagsFilterSet(django_filters.FilterSet):
     )
 
     class Meta:
-        model = models.Recipes
+        model = Recipes
         fields = ('tags',)

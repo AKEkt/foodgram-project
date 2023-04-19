@@ -1,7 +1,14 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from colorfield.fields import ColorField
 
 User = get_user_model()
+
+COLOR_PALETTE = [
+    ("#ff9a53", "breakfast", ),
+    ("#7fff7e", "lunch", ),
+    ("#a796ff", "dinner", ),
+]
 
 
 class Tag(models.Model):
@@ -10,11 +17,7 @@ class Tag(models.Model):
         max_length=150,
         unique=True,
     )
-    color = models.CharField(
-        'Цветовой HEX-код',
-        max_length=14,
-        unique=True,
-    )
+    color = ColorField(choices=COLOR_PALETTE)
     slug = models.SlugField(
         'Слаг',
         max_length=150,

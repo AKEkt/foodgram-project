@@ -42,6 +42,11 @@ class TagAdmin(admin.ModelAdmin):
     list_filter = ('name',)
     empty_value_display = '-пусто-'
 
+    def color(self, inst):
+        return inst
+
+    color.short_description = 'Цветовой HEX-код'
+
 
 class RecipIngredAdmin(admin.ModelAdmin):
     list_display = ('recipesid', 'ingredient', 'amount',)
