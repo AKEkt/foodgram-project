@@ -48,8 +48,9 @@ INSTALLED_APPS = [
     'django_filters',
     'djoser',
     'reportlab',
-    'api.recipes.apps.RecipesConfig',
-    'api.users.apps.UsersConfig',
+    'api.apps.ApiConfig'
+    'recipes.apps.RecipesConfig',
+    'users.apps.UsersConfig',
 
 ]
 

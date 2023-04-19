@@ -9,12 +9,13 @@ from rest_framework import generics, mixins, status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .filters import TagsFilterSet
+from ..api.filters import TagsFilterSet
+from ..api.serializers import (IngredientsSerializer,
+                               RecipesCreateUpdateSerializer,
+                               RecipesSerializer, SubscripRecipesSerializer,
+                               TagSerializer)
 from .models import (Favorite, Ingredient, Recipes, RecipIngred, ShoppingCart,
                      Tag)
-from .serializers import (IngredientsSerializer, RecipesCreateSerializer,
-                          RecipesSerializer, SubscripRecipesSerializer,
-                          TagSerializer)
 
 User = get_user_model()
 
@@ -53,7 +54,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
             return RecipesSerializer
-        return RecipesCreateSerializer
+        return RecipesCreateUpdateSerializer
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)

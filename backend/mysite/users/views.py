@@ -5,9 +5,9 @@ from rest_framework import generics, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..serializers.serializers import MyDjoserUserSerializer
+from ..api.serializers import (MyDjoserUserSerializer, MyTokenCreateSerializer,
+                               SubscripUserSerializer)
 from .models import Follow
-from .serializers import MyTokenCreateSerializer, SubscripUserSerializer
 
 User = get_user_model()
 
