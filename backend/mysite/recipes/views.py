@@ -1,9 +1,11 @@
+import io
+
 from api.filters import TagsFilterSet
 from api.serializers import (IngredientsSerializer,
                              RecipesCreateUpdateSerializer, RecipesSerializer,
                              SubscripRecipesSerializer, TagSerializer)
 from django.contrib.auth import get_user_model
-from django.http import HttpResponse
+from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from reportlab.pdfbase import pdfmetrics
@@ -150,11 +152,9 @@ class DownloadShopCart(generics.ListAPIView):
             else:
                 ingred += (name, measurement_unit, amount)
 
-        response = HttpResponse(content_type='application/pdf')
-        response[
-            'Content-Disposition'
-        ] = 'attachment; filename="Ingredients.pdf"'
-        c = canvas.Canvas(response)
+        buffer = io.BytesIO()
+
+        c = canvas.Canvas(buffer)
         pdfmetrics.registerFont(TTFont('TimesNewRomanRegular',
                                        'TimesNewRomanRegular.ttf'))
         c.setFont("TimesNewRomanRegular", 18)
@@ -168,4 +168,6 @@ class DownloadShopCart(generics.ListAPIView):
             y -= 20
         c.showPage()
         c.save()
-        return response
+        buffer.seek(0)
+        return FileResponse(buffer, as_attachment=True,
+                            filename='Ingredientы.pdf')
