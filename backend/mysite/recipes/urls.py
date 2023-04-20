@@ -5,7 +5,6 @@ from .views import (DownloadShopCart, FavoriteViewSet,
 		    RecipesViewSet, ShoppingCartViewSet, TagsViewSet)
 
 router = DefaultRouter()
-
 router.register(r'', RecipesViewSet, basename='recipes')
 urlpatterns = [
     path('', include(router.urls)),
