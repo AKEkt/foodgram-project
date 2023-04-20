@@ -55,8 +55,7 @@ jobs:
             script: |
               sudo docker stop $(sudo docker ps -a -q)
               sudo docker container rm $(sudo docker container ps -aq)
-              sudo docker rmi --force $(sudo docker image ls -a -q)
-              sudo docker volume rm $(sudo docker volume ls -q)
+              sudo docker rmi --force $(sudo docker image ls -a -q))
               sudo docker-compose stop          
               sudo docker pull antonekburg/foodback:latest
               sudo docker pull antonekburg/foodfront:latest
