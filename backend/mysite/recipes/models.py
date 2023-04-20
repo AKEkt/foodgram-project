@@ -1,4 +1,4 @@
-from colorfield.fields import ColorField
+﻿from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
 from django.db import models
 
@@ -87,7 +87,7 @@ class Recipes(models.Model):
         verbose_name='Дата публикации'
     )
 
-    REQUIRED_FIELDS = ['name', 'image', 'text', 'cooking_time']
+    REQUIRED_FIELDS = ['author', 'name', 'image', 'text', 'cooking_time']
 
     class Meta:
         verbose_name = 'Рецепт'
