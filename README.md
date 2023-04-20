@@ -68,6 +68,11 @@ git push
 ```
 ssh <имя_пользователя>@<публичный_IP-адрес_виртуальной_машины>
 ```
+- Создать суперпользователя:
+```
+sudo docker-compose exec backend python manage.py createsuperuser
+```
+- Войти в админку создать одну-две записи объектов(рецептов)
 - Создать дамп (резервную копию) базы данных:
 ```
 sudo docker-compose exec backend python manage.py dumpdata > fixtures.json
@@ -76,12 +81,12 @@ sudo docker-compose exec backend python manage.py dumpdata > fixtures.json
 
 ## Административная панель Django доступна по адресу:
 
-- http://158.160.24.28/admin/
+- http://85.208.208.227/admin/
 
 ## Докуметация по адресу:
 
-- http://158.160.24.28/api/docs/
+- http://85.208.208.227/api/docs/
 
 ## Сайт Foodgram:
 
-- http://158.160.24.28/
+- http://85.208.208.227/
