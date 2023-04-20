@@ -4,13 +4,15 @@ from django.db import models
 
 User = get_user_model()
 
+COLOR_PALETTE = [
+    ("#FF9A53", "breakfast", ),
+    ("#7FFF7E", "lunch", ),
+    ("#A796FF", "dinner", ),
+]
+
 
 class Tag(models.Model):
-    COLOR_PALETTE = [
-        ("#FF9A53", "breakfast", ),
-        ("#7FFF7E", "lunch", ),
-        ("#A796FF", "dinner", ),
-    ]
+
     name = models.CharField(
         'Название',
         max_length=150,
