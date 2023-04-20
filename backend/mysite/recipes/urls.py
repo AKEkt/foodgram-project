@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (DownloadShopCart, FavoriteViewSet,
 		    RecipesViewSet, ShoppingCartViewSet, TagsViewSet)
 
+
 router = DefaultRouter()
 router.register(r'', RecipesViewSet, basename='recipes')
 urlpatterns = [
