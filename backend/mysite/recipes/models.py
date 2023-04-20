@@ -4,20 +4,19 @@ from django.db import models
 
 User = get_user_model()
 
-COLOR_PALETTE = [
-    ("#FF9A53", "breakfast", ),
-    ("#7FFF7E", "lunch", ),
-    ("#A796FF", "dinner", ),
-]
-
 
 class Tag(models.Model):
+    COLOR_PALETTE = [
+        ("#FF9A53", "breakfast", ),
+        ("#7FFF7E", "lunch", ),
+        ("#A796FF", "dinner", ),
+    ]
     name = models.CharField(
         'Название',
         max_length=150,
         unique=True,
     )
-    color = ColorField(choices=COLOR_PALETTE)
+    color = ColorField(default="#FF9A53", choices=COLOR_PALETTE)
     slug = models.SlugField(
         'Слаг',
         max_length=150,
