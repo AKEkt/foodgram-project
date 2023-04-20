@@ -3,18 +3,19 @@ import io
 from api.filters import TagsFilterSet
 from api.serializers import (IngredientsSerializer,
                              RecipesCreateUpdateSerializer, RecipesSerializer,
-                             SubscripRecipesSerializer, TagSerializer)
+                             TagSerializer)
 from django.contrib.auth import get_user_model
 from django.http import FileResponse
-from django.shortcuts import get_object_or_404
+# from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
-from rest_framework import generics, mixins, status, viewsets
+from rest_framework import generics, mixins, viewsets
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 
+# from rest_framework.response import Response
+from .mixins import CreateDestroyMixin
 from .models import (Favorite, Ingredient, RecipeIngred, Recipes, ShoppingCart,
                      Tag)
 
@@ -41,7 +42,6 @@ class IngredientsViewSet(mixins.ListModelMixin,
         name = self.request.query_params.get("name", None)
 
         if name is not None:
-            print(name)
             return queryset.filter(name__istartswith=name)
         return queryset
 
@@ -73,60 +73,14 @@ class RecipesViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-class FavoriteViewSet(generics.CreateAPIView, generics.DestroyAPIView):
-    http_method_names = ['post', 'delete']
-
-    def create(self, request, *args, **kwargs):
-        recipe = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
-        Favorite.objects.create(favoriterecipe=recipe, user=self.request.user)
-        serializer = SubscripRecipesSerializer(recipe)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def delete(self, request, *args, **kwargs):
-        recipe = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
-        favorite = Favorite.objects.filter(favoriterecipe=recipe,
-                                           user=self.request.user)
-        if favorite.exists():
-            favorite.delete()
-            return Response(
-                {
-                    'выполнено': 'Рецепт успешно удален из избранного!'
-                }, status=status.HTTP_204_NO_CONTENT)
-        return Response(
-            {
-                'ошибка': 'Объект не найден!'
-            }, status=status.HTTP_400_BAD_REQUEST)
+class FavoriteViewSet(CreateDestroyMixin):
+    model = Favorite
+    queryset = Favorite.objects.all()
 
 
-class ShoppingCartViewSet(generics.CreateAPIView, generics.DestroyAPIView):
-    http_method_names = ['post', 'delete']
-
-    def create(self, request, *args, **kwargs):
-        recipe = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
-        if ShoppingCart.objects.filter(shoprecipe=recipe,
-                                       user=self.request.user).exists():
-            return Response(
-                {
-                    'ошибка': 'Рецепт уже есть в списке покупок!'
-                }, status=status.HTTP_400_BAD_REQUEST)
-        ShoppingCart.objects.create(shoprecipe=recipe, user=self.request.user)
-        serializer = SubscripRecipesSerializer(recipe)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def delete(self, request, *args, **kwargs):
-        recipe = get_object_or_404(Recipes, id=self.kwargs.get('pk'))
-        favorite = ShoppingCart.objects.filter(shoprecipe=recipe,
-                                               user=self.request.user)
-        if favorite.exists():
-            favorite.delete()
-            return Response(
-                {
-                    'выполнено': 'Рецепт успешно удален из списка покупок!'
-                }, status=status.HTTP_204_NO_CONTENT)
-        return Response(
-            {
-                'ошибка': 'Объект не найден!'
-            }, status=status.HTTP_400_BAD_REQUEST)
+class ShoppingCartViewSet(CreateDestroyMixin):
+    model = ShoppingCart
+    queryset = ShoppingCart.objects.all()
 
 
 class DownloadShopCart(generics.ListAPIView):

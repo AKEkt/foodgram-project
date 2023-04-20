@@ -62,7 +62,7 @@ class RecipesSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
     author = MyDjoserUserSerializer(read_only=True)
     ingredients = IngredientRecipesSerializer(many=True,
-                                              source='recip_ing.all')
+                                              source='recipe_ing.all')
 
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()

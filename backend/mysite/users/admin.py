@@ -58,16 +58,16 @@ class TagRecipeAdmin(admin.ModelAdmin):
 
 
 class FavoriteAdmin(admin.ModelAdmin):
-    list_display = ('user', 'favoriterecipe',)
-    list_filter = ('favoriterecipe',)
-    list_editable = ('favoriterecipe',)
+    list_display = ('user', 'recipe',)
+    list_filter = ('recipe',)
+    list_editable = ('recipe',)
     empty_value_display = '-пусто-'
 
 
 class ShoppingCartAdmin(admin.ModelAdmin):
-    list_display = ('user', 'shoprecipe',)
-    list_filter = ('shoprecipe',)
-    list_editable = ('shoprecipe',)
+    list_display = ('user', 'recipe',)
+    list_filter = ('recipe',)
+    list_editable = ('recipe',)
     empty_value_display = '-пусто-'
 
 

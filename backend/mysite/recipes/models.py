@@ -5,9 +5,9 @@ from django.db import models
 User = get_user_model()
 
 COLOR_PALETTE = [
-    ("#ff9a53", "breakfast", ),
-    ("#7fff7e", "lunch", ),
-    ("#a796ff", "dinner", ),
+    ("#FF9A53", "breakfast", ),
+    ("#7FFF7E", "lunch", ),
+    ("#A796FF", "dinner", ),
 ]
 
 
@@ -154,7 +154,7 @@ class Favorite(models.Model):
         related_name='userfav',
         verbose_name='Пользователь'
     )
-    favoriterecipe = models.ForeignKey(
+    recipe = models.ForeignKey(
         Recipes,
         on_delete=models.CASCADE,
         related_name='favrecipe',
@@ -174,7 +174,7 @@ class ShoppingCart(models.Model):
         related_name='usershop',
         verbose_name='Пользователь'
     )
-    shoprecipe = models.ForeignKey(
+    recipe = models.ForeignKey(
         Recipes,
         on_delete=models.CASCADE,
         related_name='shoprecipe',
