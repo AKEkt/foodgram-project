@@ -19,7 +19,7 @@ class RecipesAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
     def count(self, inst):
-        return Favorite.objects.filter(favoritrecip=Recipes.objects.get
+        return Favorite.objects.filter(favoriterecipe=Recipes.objects.get
                                        (id=inst.id)).count()
 
     count.short_description = 'Число добавлений'
