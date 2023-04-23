@@ -82,6 +82,8 @@ sudo docker-compose exec backend python manage.py dumpdata > fixtures.json
 ## Административная панель Django доступна по адресу:
 
 - http://85.208.208.227/admin/
+- логин: anton
+- пароль: 123
 
 ## Докуметация по адресу:
 
