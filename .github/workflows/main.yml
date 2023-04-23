@@ -38,8 +38,8 @@ jobs:
           uses: docker/build-push-action@v2 
           with:
             push: true
-            context: backend/mysite
-            file: backend/mysite/Dockerfile
+            context: backend
+            file: backend/Dockerfile
             tags: antonekburg/foodback:latest
   deploy:
       runs-on: ubuntu-latest
