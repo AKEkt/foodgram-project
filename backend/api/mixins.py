@@ -1,9 +1,8 @@
 from api.serializers import SubscripRecipesSerializer
 from django.shortcuts import get_object_or_404
+from recipes.models import Recipes
 from rest_framework import generics, status
 from rest_framework.response import Response
-
-from recipes.models import Recipes
 
 
 class CreateDestroyMixin(generics.CreateAPIView, generics.DestroyAPIView):
