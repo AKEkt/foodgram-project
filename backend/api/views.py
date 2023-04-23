@@ -1,21 +1,20 @@
 import io
 
-from api.filters import TagsFilterSet
-from api.serializers import (IngredientsSerializer,
-                             RecipesCreateUpdateSerializer, RecipesSerializer,
-                             TagSerializer)
 from django.contrib.auth import get_user_model
 from django.http import FileResponse
 from django_filters.rest_framework import DjangoFilterBackend
+from recipes.models import (Favorite, Ingredient, RecipeIngred, Recipes,
+                            ShoppingCart, Tag)
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from rest_framework import generics, mixins, viewsets
 from rest_framework.permissions import IsAuthenticated
 
+from .filters import TagsFilterSet
 from .mixins import CreateDestroyMixin
-from .models import (Favorite, Ingredient, RecipeIngred, Recipes, ShoppingCart,
-                     Tag)
+from .serializers import (IngredientsSerializer, RecipesCreateUpdateSerializer,
+                          RecipesSerializer, TagSerializer)
 
 User = get_user_model()
 
