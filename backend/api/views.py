@@ -8,7 +8,7 @@ from recipes.models import (Favorite, Ingredient, RecipeIngred, Recipes,
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
-from rest_framework import generics, mixins, viewsets
+from rest_framework import generics, mixins, pagination, viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from .filters import TagsFilterSet
@@ -48,6 +48,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete']
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TagsFilterSet
+    pagination.LimitOffsetPagination.max_limit = 1000
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
