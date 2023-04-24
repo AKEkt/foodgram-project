@@ -48,7 +48,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete']
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TagsFilterSet
-    pagination.LimitOffsetPagination.max_limit = 1000
+    pagination_class = pagination.LimitOffsetPagination
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
