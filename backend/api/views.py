@@ -48,7 +48,6 @@ class RecipesViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete']
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TagsFilterSet
-    pagination_class = pagination.LimitOffsetPagination
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
@@ -67,6 +66,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         if is_favorited:
             queryset = queryset.filter(favrecipe__user=self.request.user)
         elif is_in_shopping_cart:
+            self.pagination_class = pagination.LimitOffsetPagination
             return queryset.filter(shoprecipe__user=self.request.user)
         return queryset
 
