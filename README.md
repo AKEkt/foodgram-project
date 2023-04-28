@@ -34,7 +34,7 @@ sudo docker pull <логин_на_dockerhub>/<репозиторий_на_docker
 Скопировать из проекта:
 infra/docker-compose.yaml и infra/dump.json в infra/,
 docs/redoc.yaml и docs/openapi-schema.yml в в home/<имя_пользователя>/docs, 
-nginx/default.conf в infra/nginx/
+nginx.conf в infra/nginx.conf
 ```
 - Для подключения GitHub Actions необходимо создать директорию .github/workflows и скопировать в него main.yml
 
@@ -81,14 +81,12 @@ sudo docker-compose exec backend python manage.py dumpdata > fixtures.json
 
 ## Административная панель Django доступна по адресу:
 
-- http://85.208.208.227/admin/
-- логин: a@ya.ru
-- пароль: 123
+- http://<публичный_IP-адрес_виртуальной_машины>/admin/
 
 ## Докуметация по адресу:
 
-- http://85.208.208.227/api/docs/
+- http://<публичный_IP-адрес_виртуальной_машины>/api/docs/
 
 ## Сайт Foodgram:
 
-- http://85.208.208.227/
+- http://<публичный_IP-адрес_виртуальной_машины>/
